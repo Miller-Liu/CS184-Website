@@ -10,10 +10,29 @@
     "deploy": "npm run build && gh-pages -d dist"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
     "gh-pages": "^6.3.0",
-    "vite": "^7.0.2"
+    "postcss": "^8.5.6",
+    "sass": "^1.89.2",
+    "sass-embedded": "^1.89.2",
+    "tailwindcss": "^4.1.11",
+    "vite": "^7.0.3"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
     "three": "^0.178.0"
-  }
+  },
+  "main": "redirect.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Miller-Liu/CS184-Website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Miller-Liu/CS184-Website/issues"
+  },
+  "homepage": "https://github.com/Miller-Liu/CS184-Website#readme",
+  "description": ""
 }

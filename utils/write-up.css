@@ -1,0 +1,46 @@
+@import url("/utils/fonts.css");
+@import "tailwindcss";
+
+html, body {
+    overscroll-behavior: none;
+}
+
+header {
+    font-family: "pixel";
+    @apply fixed top-0 w-full h-[12.5vh] flex flex-col justify-center;
+    padding: 0 1.5rem 0 1.5rem;
+
+    h1 {
+        @apply text-4xl md:text-5xl truncate;
+        font-size: clamp(2.5rem, 1vw + 1.9rem, 3rem);
+    }
+}
+
+aside > nav > a {
+    @apply block text-gray-700 hover:text-blue-600;
+}
+
+main {
+    @apply overflow-auto;
+
+    * {
+        @apply my-1;
+        font-size: large;
+    }
+
+    h1 {
+        @apply text-3xl;
+    }
+
+    h2 {
+        @apply text-2xl;
+    }
+
+    h1, h2{
+        @apply sticky top-0 bg-white pt-4;
+    }
+
+    code {
+        @apply px-1 bg-zinc-300 rounded-sm;
+    }
+}
