@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Graphics Showcase</title>
+		<script type="module" crossorigin src="/CS184-Website/assets/hw01-Bi-DzrcO.js"></script>
+		<link rel="modulepreload" crossorigin href="/CS184-Website/assets/modulepreload-polyfill-B5Qt9EMX.js">
+		<link rel="stylesheet" crossorigin href="/CS184-Website/assets/hw01-DNC5SgjQ.css">
+	</head>
+	<body class="">
+		<header>
+			<h1>Homework 1: Rasterizer</h1>
+			<p>By -- Miller Liu</p>
+		</header>
+		<div class="fixed bottom-0 w-full h-[87.5vh] flex flex-row">
+			<!-- Sidebar -->
+			<aside class="h-fit h-max-[80vh] w-64 bg-white shadow-lg rounded-lg m-6 p-6 hidden lg:block flex-shrink-0" aria-label="Sidebar">
+				<nav id="table-of-content" class="space-y-4">
+					<!-- JS will inject ToC here -->
+				</nav>
+			</aside>
+
+			<!-- Main Content -->
+			<main class="right-0 bottom-0">
+				<section>
+					<h2>Task 1</h2>
+					<p>My <code>rasterize_triangle</code> implementation operates in two main steps: <b>bounding box filtering</b> and <b>edge equation testing</b>.</p>
+					<ol>
+						<li>Bounding Box Filtering: I first compute the axis-aligned bounding box of the triangle by finding the minimum and maximum x and y values among its three vertices. This step narrows down the region of pixels we need to consider, avoiding unnecessary work outside the triangle’s extent.</li>
+						<li>Edge Equation Test: For each pixel within the bounding box, I evaluate the edge equations for all three triangle edges. These equations are constructed in a consistent winding order (either clockwise or counterclockwise). A pixel is considered inside the triangle if all three edge functions return values with the same sign (all positive or all negative). Since this method doesn’t require a specific winding direction, the method works regardless of whether the triangle is wound clockwise or counterclockwise.</li>
+					</ol>
+				</section>
+
+				<section>
+					<h2>Task 2</h2>
+					<p>Supersampling is useful for reducing aliasing—the jagged, stair-step artifacts you often see along diagonal or curved edges in rasterized images. It works by taking multiple samples per pixel (supersampling), then averaging those samples (downsampling) to produce a smoother final result. </p>
+					<p>Here’s how I updated key functions to support supersampling:</p>
+					<ul>
+						<li>`rasterize_triangle` — added two for loops for the additional x and y supersampling</li>
+						<li>`set_sample_rate` and `set_framebuffer_target` — Modified the sample buffer allocation to account for supersampling by resizing the buffer to `width * height * sample_rate`.</li>
+						<li>`resolve_to_framebuffer` — Added logic to iterate over all supersamples within each pixel, average their color values, and store the result in the final framebuffer.</li>
+						<li>Created a version of `fill_pixel` that accepts an additional parameter `size_t s` to specify which supersample to update.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Task 3</h2>
+					<p>Cubeman just saw his best friend from home, so he raised his right arm to wave hi while lowering his left arm. To do this, I rotated the cubes that make up his left and right arm, then adjusted the translation transformations so it looked okay.</p>
+				</section>
+
+				<section>
+					<h2>Task 4</h2>
+					<ul>
+						<li>`rasterize_triangle` — added two for loops for the additional x and y supersampling</li>
+						<li>`set_sample_rate` and `set_framebuffer_target` — Modified the sample buffer allocation to account for supersampling by resizing the buffer to `width * height * sample_rate`.</li>
+						<li>`resolve_to_framebuffer` — Added logic to iterate over all supersamples within each pixel, average their color values, and store the result in the final framebuffer.</li>
+						<li>Created a version of `fill_pixel` that accepts an additional parameter `size_t s` to specify which supersample to update.</li>
+						<li>`set_sample_rate` and `set_framebuffer_target` — Modified the sample buffer allocation to account for supersampling by resizing the buffer to `width * height * sample_rate`.</li>
+						<li>`resolve_to_framebuffer` — Added logic to iterate over all supersamples within each pixel, average their color values, and store the result in the final framebuffer.</li>
+						<li>Created a version of `fill_pixel` that accepts an additional parameter `size_t s` to specify which supersample to update.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Task 5</h2>
+					<h3>TESTING</h3>
+				</section>
+			</main>
+		</div>
+	</body>
+</html>
