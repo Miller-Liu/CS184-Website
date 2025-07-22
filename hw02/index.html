@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Graphics Showcase</title>
+		<!-- <link href="../utils/write-up.css" media="screen" rel="stylesheet"/> -->
+		<script type="module" crossorigin src="/CS184-Website/assets/hw02-Cbl4qpi8.js"></script>
+		<link rel="modulepreload" crossorigin href="/CS184-Website/assets/modulepreload-polyfill-B5Qt9EMX.js">
+		<link rel="stylesheet" crossorigin href="/CS184-Website/assets/hw02-DSavlsQd.css">
+	</head>
+	<body class="">
+		<header>
+			<h1>Homework 2: Mesh Edit</h1>
+			<p class="onlyprint">Website Link: 
+				<a href="https://miller-liu.github.io/CS184-Website/hw02" target="_blank" rel="noopener noreferrer">miller-liu.github.io/CS184-Website/hw02</a>
+			</p>
+			<p>By -- Miller Liu</p>
+			<hr>
+		</header>
+		<div>
+			<!-- Sidebar -->
+			<aside class="h-fit h-max-[80vh] w-64 bg-white shadow-lg rounded-lg m-6 p-6 hidden lg:block flex-shrink-0" aria-label="Sidebar">
+				<nav id="table-of-content" class="space-y-4">
+					<!-- JS will inject ToC here -->
+				</nav>
+			</aside>
+
+			<!-- Main Content -->
+			<main class="right-0 bottom-0">
+				<section id="1">
+					<h1>Part 1 — Bézier Curves with 1D de Casteljau Subdivision</h1>
+					<p>What is de Casteljau’s algorithm and how does it work? De Casteljau's algorithm is a recursive algorithm for computing points on a Bézier curve. It does this in a couple of steps:</p>
+					<ol>
+						<li>Pick a pair of control points (points that are neighbors).</li>
+						<li>Generate a new point by linearly interpolating between the two points with a parameter t between 0 and 1.</li>
+						<li>Repeat this process for all pairs of control points.</li>
+						<li>Repeat steps 1 - 3 with the newly generated set of control points until only 1 remains.</li>
+					</ol>
+					<p>The following images illustrates this process:</p>
+					<div class="pics-carousel grid-cols-3 max-w-5xl">
+						<figure>
+							<img src="/CS184-Website/assets/Task1-1-BxR6-iSa.png">
+							<figcaption>Control points for Bézier curve</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task1-2-DuXl775c.png">
+							<figcaption>First iteration of de Castlejau's subdivision</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task1-3-KaUHlxwR.png">
+							<figcaption>Second iteration of de Castlejau's subdivision</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task1-4-CeLQlzCL.png">
+							<figcaption>Third iteration of de Castlejau's subdivision</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task1-5-CLibLn5I.png">
+							<figcaption>Fourth iteration of de Castlejau's subdivision</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task1-6-DCNR9Hvo.png">
+							<figcaption>Final point on the curve</figcaption>
+						</figure>
+					</div>
+					<p>To implement de Casteljau's algorithm, I created the <code>evaluateStep</code> function which performs linear interpolation between every pair of consecutive control points. This function is called repeatedly on the newly generated points until only one point remains, which represents the point on the Bézier curve for a given parameter t.</p>
+					<p>By repeatedly applying <code>evaluateStep</code> with varying values of t, we can generate a smooth Bézier curve, as illustrated below.</p>
+					<div class="pics-carousel grid-cols-2 max-w-4xl">
+						<img src="/CS184-Website/assets/Task1-7-DOtkNflZ.png">
+						<img src="/CS184-Website/assets/Task1-8-BW4AdzZc.png">
+					</div>
+				</section>
+
+				<section id="2">
+					<h1>Part 2 — Bézier Surfaces with Separable 1D de Casteljau</h1>
+					<figure class="w-xs float-left mx-2">
+						<img src="/CS184-Website/assets/Task2-1-BSO8FRGh.png"/>
+						<figcaption>Animation: Steven Wittens, Making Things with Maths</figcaption>
+					</figure>
+					<p>Now, for Bézier surfaces, we have an additional direction that we have to consider. To do this, we can extend the same recursive interpolation technique using two dimensions, typically using the u and v parameters.</p>
+					<p>Imagine we have a rectangular grid of 3D control points. Each row of this grid defines a Bézier curve in the u-direction. By applying the evaluateStep function across each row using the u parameter, we compute intermediate points along those curves. This results in a new one-dimensional array of 3D points.</p>
+					<p>Then, treating this new array as control points for another Bézier curve (in the v-direction), we apply evaluateStep again using the v parameter. The final result is a single point on the Bézier surface. (This process is also illustrated on the left, where the grey lines are Bézier curves in the u-direction and the blue line is the final Bézier curve in the v-direction.)</p>
+					<p>To implement Bézier surface evaluation, I structured the logic across three functions:</p>
+					<ol>
+						<li><code>evaluateStep(t)</code> — An overloaded version of the original <code>evaluateStep</code>, which takes a parameter t and performs linear interpolation between each pair of control points.</li>
+						<li><code>evaluate1D(t)</code> — Uses <code>evaluateStep(t)</code> recursively to compute a single point on a Bézier curve for the given parameter t.</li>
+						<li><code>evaluate(u, v)</code> — Computer the point corresponding to u and v using <code>evaluateStep(t)</code> as detailed above.</li>
+					</ol>
+					<figure class="max-w-md mx-auto pt-3">
+						<img src="/CS184-Website/assets/Task2-2-Bc-_BeVh.png"/>
+						<figcaption>Teapot created with Bézier surfaces using de Casteljau's algorithm.</figcaption>
+					</figure>
+				</section>
+
+				<section id="3">
+					<h1>Part 3 — Area-Weighted Vertex Normals</h1>
+					<figure class="w-xs float-left mx-2">
+						<img src="/CS184-Website/assets/Task3-1-CW3SFTSc.png"/>
+						<figcaption>Half edge structure (from CS 189 lecture slides)</figcaption>
+					</figure>
+					<p>When performing Phong shading, the direction of the normal vectors is crucial for determining how much light interacts reflects off a surface. A naive approach is to use face normals — vectors perpendicular to each triangle face — but this creates sharp, unrealistic edges between adjacent triangles.</p>
+					<p>A more visually smooth result is achieved by using vertex normals, computed as the weighted average of the normals of the faces adjacent to each vertex. Then, for every point on a face, we can just use methods such as parycentric coordinates to interpolate between the three vertex normals to find how much light is reflected at that point.</p>
+					<p>Roughly speaking, this can be broken down into a couple steps:</p>
+					<ol>
+						<li>Iterate through all faces adjacent to the vertex.</li>
+						<li>For each face, compute its normal vector and scale it by it's area.</li>
+						<li>Accumulate these weighted normals.</li>
+						<li>Normalize the final sum to get a unit normal at the vertex.</li>
+					</ol>
+					<p>More specifically, I iterated through all the faces by starting on a particular halfedge, then going to the next halfedge it's pointing to. I then calculate and add the cross product of these two vectors, then flip to the opposite halfedge (other side of current edge), and repeat this process until I get back to where I started. This is essentially the process of rotating through the faces of the triangles.</p>
+					<p>The diagram on the left should also make this process a lot clearer.</p>
+					<figure class="max-w-md mx-auto pt-3">
+						<img src="/CS184-Website/assets/Task3-2-BZFTy5Za.png"/>
+						<figcaption>Teapot with Phong shading using vertex normals.</figcaption>
+					</figure>
+				</section>
+
+				<section id="4">
+					<h1>Part 4 — Edge Flip</h1>
+					<p>The edge flip function is tricky because all the edges, faces, and vertices are all so interconnected that it's very easy to make a mistake. I started by carefully drawing diagrams of the local mesh structure before and after the flip—this helped me visualize how vertex and half-edge relationships should change. As I was coding, I made sure to write a lot of comments explaining what's happening in my code, and that I was organizing my code in a logical way. This helped me immensely for checking off what needs to be implemented and for debugging my code.</p>
+					<div class="pics-carousel grid-cols-2 max-w-4xl">
+						<figure>
+							<img src="/CS184-Website/assets/Task4-1-BroP_V_b.png">
+							<figcaption>Starting mesh model</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task4-2-D-He6tMJ.png">
+							<figcaption>The edge we are flipping</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task4-3-3-UKgxHA.png">
+							<figcaption>Mesh model after the edge flip</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task4-4-0cyqTVA-.png">
+							<figcaption>Mesh model after some more edge flips</figcaption>
+						</figure>
+					</div>
+				</section>
+
+				<section id="5">
+					<h1>Part 5 — Edge Split</h1>
+					<p>The edge split function is even more complicated than edge flips because it also requires the creation of vertices and faces, as well as updating relationships between many more edges and faces. Like before, I sketched out the mesh before and after the split, labeling all affected elements. Having a logical organization of code and intuitive comments like I did for edge flips also helped me out immensely when implementing edge splits. I did, however, run into issues with freezing, which costed me many hours of walking through my code's logic to find the issue.</p>
+					<div class="pics-carousel grid-cols-2 max-w-4xl">
+						<figure>
+							<img src="/CS184-Website/assets/Task5-1-_B-rzoKe.png">
+							<figcaption>Starting mesh model</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task5-2-Dit-QD07.png">
+							<figcaption>The edge we are splitting</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task5-3-D-dCdqzO.png">
+							<figcaption>Mesh model after the edge split</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task5-4-Cg2PiZ7t.png">
+							<figcaption>Mesh model after some more edge flips and splits</figcaption>
+						</figure>
+					</div>
+					<p>I also implemented boundary edge splitting, which not only carried over the difficulties of edge splitting in general, but also introduced the question of: how do we properly handle the boundary edge? For this, I had to carefully plan how to update certain edges, because if I updated edges in the wrong order, information about the next boundary edge could be lost. Even with using the methods I used before though, I still ran into many errors while implementing this feature, which cost me many hours of careful examination.</p>
+					<div class="pics-carousel grid-cols-2 max-w-4xl">
+						<figure>
+							<img src="/CS184-Website/assets/Task5-5-DJz6zfBt.png">
+							<figcaption>Starting mesh model</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task5-6-CpA3NcA-.png">
+							<figcaption>The edge we are splitting</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task5-7-DecdnR2F.png">
+							<figcaption>Mesh model after the edge split</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task5-8-DognhsJn.png">
+							<figcaption>Mesh model after more boundary edge splits</figcaption>
+						</figure>
+					</div>
+				</section>
+
+				<section id="6">
+					<h1>Part 6 — Loop Subdivision for Mesh Upsampling</h1>
+					<p>As recommended in the spec, I started by preprocessing the weighted vertex positions for both the old and new vertices in the mesh. For the old vertices, this was pretty straightforward — I just stored the new positions in their newPosition field. The new vertices are more complicated, because they do not exist yet. However, their soon-to-be location can be stored in the newPosition field of the edges they are split from, since new vertices can only be created from edge splits.</p>
+					<p>After this precomputation, I looped through all the edges and split them using the edge split function. Here, I realized that I needed a way to prevent an infinite loop, which I prevented by using the isNew field to tell the computer which edges did not exist in the original mesh. I then looped through the edges connecting an old vertex to a new vertex, and flipped them.</p>
+					<div class="pics-carousel grid-cols-3 max-w-6xl">
+						<figure>
+							<img src="/CS184-Website/assets/Task6-1-BUP5f2hF.png">
+							<figcaption>Starting mesh model</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task6-2-DeSV8mjG.png">
+							<figcaption>After 1 loop subdivision</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task6-3-DWiUVaDb.png">
+							<figcaption>After 2 loop subdivision</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task6-4-B26COget.png">
+							<figcaption>Starting mesh model (with symmetric topology)</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task6-5-D5MGDbd6.png">
+							<figcaption>After 1 loop subdivision</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task6-6-CaoMgBg4.png">
+							<figcaption>After 2 loop subdivision</figcaption>
+						</figure>
+					</div>
+					<p>Loop subdivision works by positioning vertices in the middle of edges, which has a side effect of rounding out sharp edges. If we have a starting topology that is not symmetric, this side effect can compound, rounding out edges more in one direction, leading to effects such as the asymmetric subdivision shown in the cube above. We can fix this by making the starting topology symmetric, so the subdivisions occur evenly in all directions. This helps preserve the original shape better over many iterations.</p>
+					<p>I also implemented subdividing meshes with boundary. The main difficulty here is tweaking with the formula for new positioning. As I played around with the formula, I noticed that certain ways of assigning new position would result in jagged edges, and specific formulas would result in different smoothness of material. Eventually I settled for a simple implementation of new positions, with some of the results of this shown below:</p>
+					<div class="pics-carousel grid-cols-2 max-w-6xl">
+						<figure>
+							<img src="/CS184-Website/assets/Task6-7-BLKZFUNd.png">
+							<figcaption>Starting mesh model</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/Task6-8-u-IaHMJG.png">
+							<figcaption>After 1 loop subdivision</figcaption>
+						</figure>
+					</div>
+				</section>
+			</main>
+		</div>
+	</body>
+</html>
