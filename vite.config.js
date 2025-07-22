@@ -12,6 +12,7 @@ export default defineConfig({
             input: {
                 main: path.resolve(__dirname, 'index.html'),
                 hw01: path.resolve(__dirname, 'hw01/index.html'),
+                hw02: path.resolve(__dirname, 'hw02/index.html'),
             }
         }
     }

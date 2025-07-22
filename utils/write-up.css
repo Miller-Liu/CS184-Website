@@ -1,19 +1,33 @@
 @import url("/utils/fonts.css");
 @import "tailwindcss";
 
+* {
+    font-family: "Quicksand";
+}
+
 html, body {
     overscroll-behavior: none;
 }
 
 header {
-    font-family: "pixel";
-    @apply fixed top-0 w-full h-[12.5vh] flex flex-col justify-center;
-    padding: 0 1.5rem 0 1.5rem;
+    @apply fixed top-0 w-full h-[11vh] flex flex-col justify-end px-6;
 
     h1 {
         @apply text-4xl md:text-5xl truncate;
         font-size: clamp(2.5rem, 1vw + 1.9rem, 3rem);
     }
+
+    p {
+        @apply text-2xl;
+    }
+
+    hr {
+        @apply hidden;
+    }
+}
+
+body > div:first-of-type {
+    @apply fixed bottom-0 w-full h-[89vh] flex flex-row;
 }
 
 aside > nav > a {
@@ -21,15 +35,14 @@ aside > nav > a {
 }
 
 main {
-    @apply overflow-auto;
+    @apply overflow-auto px-6;
 
     * {
         @apply my-1;
-        font-size: large;
     }
 
     h1 {
-        @apply text-3xl;
+        @apply text-2xl;
     }
 
     h2 {
@@ -37,10 +50,18 @@ main {
     }
 
     h1, h2{
-        @apply sticky top-0 bg-white pt-4;
+        @apply sticky top-0 bg-white pt-4 scroll-mt-2;
     }
 
     code {
         @apply px-1 bg-zinc-300 rounded-sm;
+    }
+
+    b {
+        @apply font-semibold;
+    }
+
+    ol {
+        @apply list-decimal list-inside;
     }
 }

@@ -5,3 +5,69 @@
     font-weight: 400;
     font-style: normal;
 }
+
+/* Inter Variable - Regular */
+@font-face {
+    font-family: 'Inter';
+    src: url('/utils/fonts/InterVariable.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Inter Variable - Italic */
+@font-face {
+    font-family: "Inter";
+    src: url("/utils/fonts/InterVariable-Italic.ttf") format('truetype');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Space Mono - Regular */
+@font-face {
+    font-family: "SpaceMono";
+    src: url("/utils/fonts/SpaceMono-Regular.ttf") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Space Mono - Bold */
+@font-face {
+    font-family: "SpaceMono";
+    src: url("/utils/fonts/SpaceMono-Bold.ttf") format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Space Mono - Regular */
+@font-face {
+    font-family: "SpaceMono";
+    src: url("/utils/fonts/SpaceMono-Italic.ttf") format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+/* Comic Relief - Regular */
+@font-face {
+    font-family: "ComicRelief";
+    src: url("/utils/fonts/ComicRelief-Regular.ttf") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Comic Relief - Regular */
+@font-face {
+    font-family: "ComicRelief";
+    src: url("/utils/fonts/ComicRelief-Bold.ttf") format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Quicksand - Regular */
+@font-face {
+    font-family: "Quicksand";
+    src: url("/utils/fonts/Quicksand.ttf") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

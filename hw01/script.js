@@ -20,7 +20,7 @@ if (headings) {
                 newAnchor.classList.add("pl-8");
                 break
         }
-        newAnchor.href = `#main-header-${index}`
+        newAnchor.href = `#${index}`
         tableOfContent.appendChild(newAnchor);
     }) 
 }
