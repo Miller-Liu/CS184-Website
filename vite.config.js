@@ -13,6 +13,8 @@ export default defineConfig({
                 main: path.resolve(__dirname, 'index.html'),
                 hw01: path.resolve(__dirname, 'hw01/index.html'),
                 hw02: path.resolve(__dirname, 'hw02/index.html'),
+                hw03: path.resolve(__dirname, 'hw03/index.html'),
+                final_project: path.resolve(__dirname, 'final_project/index.html'),
             }
         }
     }

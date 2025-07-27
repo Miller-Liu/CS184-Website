@@ -9,6 +9,10 @@ html, body {
     overscroll-behavior: none;
 }
 
+a {
+    @apply underline;
+}
+
 header {
     @apply w-full flex flex-col justify-end px-7;
 
@@ -18,10 +22,6 @@ header {
 
     p {
         @apply text-xl;
-    }
-
-    a {
-        @apply underline;
     }
 
     hr {
@@ -64,6 +64,10 @@ main {
         @apply font-bold;
     }
 
+    ul {
+        @apply list-inside;
+    }
+
     ol {
         @apply list-decimal list-inside;
     }
@@ -74,6 +78,10 @@ main {
 
     div.pics-carousel {
         @apply grid gap-x-4 mt-2 mx-auto;
+    }
+
+    figure {
+        @apply content-center;
     }
 
     figure > figcaption {
