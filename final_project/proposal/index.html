@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Graphics Showcase</title>
+		<!-- <link href="../utils/write-up.css" media="screen" rel="stylesheet"/> -->
+		<script type="module" crossorigin src="/CS184-Website/assets/modulepreload-polyfill-B5Qt9EMX.js"></script>
+		<script type="module" crossorigin src="/CS184-Website/assets/write-up-CQYhngzC.js"></script>
+		<link rel="stylesheet" crossorigin href="/CS184-Website/assets/print-CI5JF8U1.css">
+	</head>
+	<body class="">
+		<header>
+			<h1>Dawn to Dust: Volumetric Scattering</h1>
+			<p class="onlyprint">Website Link: 
+				<a href="https://miller-liu.github.io/CS184-Website/final_project/proposal" target="_blank" rel="noopener noreferrer">miller-liu.github.io/CS184-Website/final_project/proposal/</a>
+			</p>
+			<p>Contributers:  Miller Liu, Stephane Finot, Kevin Hu, John Bragado</p>
+			<hr>
+		</header>
+		<div>
+			<!-- Sidebar -->
+			<aside class="h-fit h-max-[80vh] w-64 bg-white shadow-lg rounded-lg m-6 p-6 hidden lg:block flex-shrink-0" aria-label="Sidebar">
+				<nav id="table-of-content" class="space-y-4">
+					<!-- JS will inject ToC here -->
+				</nav>
+			</aside>
+
+			<!-- Main Content -->
+			<main>
+				<section id="1">
+					<h1>Project Overview</h1>
+					<p>From what we've covered in class, light is only modeled as interacting with surfaces. However, in the real world, light also interacts with the space between objects—scattering through the air, diffusing in fog, or breaking into different wavelengths when passing through certain materials. The goal of our project is to enhance realism in rendered scenes by implementing volumetric scattering, allowing us to simulate effects like atmospheric haze, light shafts, and dust-filled environments.</p>
+				</section>
+				<section id="2">
+					<h1>Goals and Deliverables</h1>
+					<p>We plan to deliver scenes with basic volumetric lighting. We want to render images of scenes (like the one below) with light shining through a window or through a projector. Our project will showcase the scene with different parameters like the placement, brightness, and colors of light, as well as the density of fog.</p>
+					<div class="pics-carousel grid-cols-3 max-w-5xl">
+						<figure>
+							<img src="/CS184-Website/assets/1-jYIMzbt-.png">
+							<figcaption>What we hope to achieve with volumetric lighting</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/3--kXiqByM.png">
+							<figcaption>Potential picture we can recreate</figcaption>
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/2-BoLvoM54.png">
+							<figcaption>Potentially implementing dust (specs) and god rays</figcaption>
+						</figure>
+					</div>
+					<p>If things go well, we would like to incorporate dust particles that float around and glow in the light. This would add even further to the immersion and create an effect that brings our scenes closer to realism. A problem that may arise is animating the paths of the dust particles.</p>
+					<p>Another ambition would be to figure out how to set the light source to mimic an image so that we could see the different colors of the image flying through the volumetric lighting (similar to a movie projector).</p>
+					<p>In addition, we hope to be able to create an interactive GUI that allows us to change certain parameters of the light, camera, and scene while rendering. However, this would require real-time rendering which would be very difficult to implement.</p>
+					<p>We can measure the performance fo our system by visually comparing the effect we get from volumetric lighting vs without, and also compare our result to what might be expected in real life. In addition, we can compare our visual output to industry examples such as the disney samples to see how well our algorithm did.</p>
+				</section>
+				<section id="3">
+					<h1>Timeline:</h1>
+					<ul class="list-disc pl-2">
+						<li>Week 1:</li>
+						<ul class="list-[circle] pl-6">
+							<li>Finish the pathtracer assignment early, and plan out what needs to be modified</li>
+							<li>Research relevant volumetric lighting algorithms and data structures</li>
+							<li>Ideally finish coding the volumetric lighting feature</li>
+							<li>Work on the milestone describing our discoveries and implementations</li>
+						</ul>
+						<li>Week 2 (plus three days):</li>
+						<ul class="list-[circle] pl-6">
+							<li>Finishing up the volumetric lighting code</li>
+							<li>Implement sample scenes such as the movie theater or dust scene</li>
+							<li>Start creating an interactive website to demonstrate our project</li>
+							<li>Potentially work on other features we have in mind</li>
+						</ul>
+					</ul>
+				</section>
+				<section id="4">
+					<h1>Resources</h1>
+					<p>We will use the code for Homework 3 (Path Tracer) as a starting point for our project.</p>
+					<p>In addition, there is a variety of articles and research papers out there with relevant information about this topic:</p>
+					<ul class="list-[circle]">
+						<li><a href="https://cs.dartmouth.edu/~wjarosz/publications/dissertation/chapter4.pdf">Wojciech Jarosz’s thesis from Dartmouth</a></li>
+						<li><a href="http://luthuli.cs.uiuc.edu/~daf/courses/rendering/papers/lafortune96rendering.pdf">UIUC paper on rendering with participiating media</a></li>
+						<li><a href="https://cseweb.ucsd.edu/~ravir/papers/singlescat/scattering.pdf">UCSD paper on scattering model</a></li>
+					</ul>
+				</section>
+			</main>
+		</div>
+	</body>
+</html>
