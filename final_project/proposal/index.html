@@ -7,7 +7,7 @@
 		<!-- <link href="../utils/write-up.css" media="screen" rel="stylesheet"/> -->
 		<script type="module" crossorigin src="/CS184-Website/assets/modulepreload-polyfill-B5Qt9EMX.js"></script>
 		<script type="module" crossorigin src="/CS184-Website/assets/write-up-CQYhngzC.js"></script>
-		<link rel="stylesheet" crossorigin href="/CS184-Website/assets/print-CI5JF8U1.css">
+		<link rel="stylesheet" crossorigin href="/CS184-Website/assets/print-Cw2XO4TC.css">
 	</head>
 	<body class="">
 		<header>
@@ -16,6 +16,7 @@
 				<a href="https://miller-liu.github.io/CS184-Website/final_project/proposal" target="_blank" rel="noopener noreferrer">miller-liu.github.io/CS184-Website/final_project/proposal/</a>
 			</p>
 			<p>Contributers:  Miller Liu, Stephane Finot, Kevin Hu, John Bragado</p>
+			<p><b>Project Summary: </b>In this project, we will be implementing ray marching to simulate volumetric scattering. The end goal will be to be able to light a morning scene through a window and highlight the atmosphere with our volumetric scattering.</p>
 			<hr>
 		</header>
 		<div>
@@ -29,8 +30,8 @@
 			<!-- Main Content -->
 			<main>
 				<section id="1">
-					<h1>Project Overview</h1>
-					<p>From what we've covered in class, light is only modeled as interacting with surfaces. However, in the real world, light also interacts with the space between objects—scattering through the air, diffusing in fog, or breaking into different wavelengths when passing through certain materials. The goal of our project is to enhance realism in rendered scenes by implementing volumetric scattering, allowing us to simulate effects like atmospheric haze, light shafts, and dust-filled environments.</p>
+					<h1>Problem Description</h1>
+					<p>From what we've covered in class, light is only modeled as interacting with surfaces. However, in the real world, light also interacts with the space between objects—scattering through the air, diffusing in fog, or breaking into different wavelengths when passing through certain materials. The goal of our project is to enhance realism in rendered scenes by implementing volumetric scattering, allowing us to simulate effects like atmospheric haze, light shafts, and dust-filled environments. We will solve this by implementing ray marching and sampling as a ray travels rather than only at intersections.</p>
 				</section>
 				<section id="2">
 					<h1>Goals and Deliverables</h1>
@@ -49,10 +50,10 @@
 							<figcaption>Potentially implementing dust (specs) and god rays</figcaption>
 						</figure>
 					</div>
+					<p>We want to make sure that the light scattering is modeled correctly through physically correct equations, so our metrics will be to make sure we have a visual output that is similar to some industry examples, such as the Disney samples given. We are trying to provide an answer for how to effectively implement volumetric scattering. Our target is to be able to light a scene with a directed light and see the region of the scene that the light rays are traveling through. </p>
 					<p>If things go well, we would like to incorporate dust particles that float around and glow in the light. This would add even further to the immersion and create an effect that brings our scenes closer to realism. A problem that may arise is animating the paths of the dust particles.</p>
 					<p>Another ambition would be to figure out how to set the light source to mimic an image so that we could see the different colors of the image flying through the volumetric lighting (similar to a movie projector).</p>
 					<p>In addition, we hope to be able to create an interactive GUI that allows us to change certain parameters of the light, camera, and scene while rendering. However, this would require real-time rendering which would be very difficult to implement.</p>
-					<p>We can measure the performance fo our system by visually comparing the effect we get from volumetric lighting vs without, and also compare our result to what might be expected in real life. In addition, we can compare our visual output to industry examples such as the disney samples to see how well our algorithm did.</p>
 				</section>
 				<section id="3">
 					<h1>Timeline:</h1>
