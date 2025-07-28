@@ -21,7 +21,7 @@ header {
     }
 
     p {
-        @apply text-xl;
+        @apply text-xl my-1;
     }
 
     hr {
@@ -73,7 +73,7 @@ main {
     }
 
     section {
-        @apply pt-2 pb-5;
+        @apply pt-2 pb-1;
     }
 
     div.pics-carousel {

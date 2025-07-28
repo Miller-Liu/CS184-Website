@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
+    "fast-glob": "^3.3.3",
     "three": "^0.178.0"
   },
   "main": "redirect.js",
