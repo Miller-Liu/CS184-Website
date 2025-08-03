@@ -21,7 +21,7 @@ header {
     }
 
     p {
-        @apply text-xl my-1;
+        @apply text-xl mt-1;
     }
 
     hr {
@@ -76,15 +76,43 @@ main {
         @apply pt-2 pb-1;
     }
 
+    section:not(:first-of-type) {
+        @apply break-before-page clear-both;
+    }
+
     div.pics-carousel {
-        @apply grid gap-x-4 mt-2 mx-auto;
+        @apply grid gap-x-4 mt-2 mx-auto justify-items-center;
+
+        p {
+            @apply text-sm;
+        }
+
+        h3 {
+            @apply text-lg;
+        }
     }
 
     figure {
         @apply content-center;
+
+        img {
+            @apply object-contain;
+        }
+        
+        figcaption {
+            @apply text-center text-sm text-gray-600;
+        }
     }
 
-    figure > figcaption {
-        @apply text-center text-sm text-gray-600;
+    table {
+        @apply table-auto max-w-6xl mx-auto my-3 text-center;
+
+        tr:first-of-type {
+            @apply bg-gray-200 font-bold;
+        }
+
+        td {
+            @apply px-4 py-2;
+        }
     }
 }

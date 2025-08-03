@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Graphics Showcase</title>
 		<!-- <link href="../utils/write-up.css" media="screen" rel="stylesheet"/> -->
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 		<link href="/utils/print.css"  rel="stylesheet"/>
 	</head>
 	<body class="">
@@ -27,9 +28,36 @@
 			<!-- Main Content -->
 			<main>
 				<section id="1">
-					<h1>Part 1 — Ray Generation and Scene Intersection</h1>
-					<p>The ray tracing rendering pipeline is a graphics pipeline that simulates the path of light to generate realistic images. This pipeline begins with ray generation and primitive intersection, which we will discuss below:</p>
+					<h1>Overview</h1>
+					<p>
+						Homework 3 is a path tracing renderer, that aims to render objects, direct lighting, and some indirect lighting realistically and efficiently. This homework includes ray-triangle intersections using the Möller-Trumbore algorithm, support for triangle meshes and spheres, and performance improvements using a bounding volume hierarchy (BVH). To handle lighting, it compares uniform hemisphere sampling with importance sampling, and later adds global illumination through recursive ray bounces. Adaptive sampling was also added to reduce the number of rays in low-variance areas, significantly improving render times with minimal impact on image quality.
+					</p>
+				</section>
 
+				<section id="2" class="!break-before-auto">
+					<h1>Part 1 — Ray Generation and Scene Intersection</h1>
+					<p>
+						The ray tracing rendering pipeline is a graphics pipeline that simulates the path of light 
+						to generate realistic images. For this to be possible, we will first need to generate rays 
+						rays from the camera into the scene that interact with objects in the scene, which we can 
+						break down into two stages — ray generation and primitive intersection.
+					</p>
+					<p>
+						More specifically, ray tracing begins by creating rays (called primary rays) for each pixel 
+						on the screen which shoot from the camera into the scene. Each ray corresponds to a pixel on 
+						the screen, and the intersection between rays and our scene determines what that pixel should 
+						display. However, rays are just geometric constructs — we need to explicitly compute if and  
+						where they intersect with objects in the scene. Usually, objects are built up from primitives 
+						(usually simple geometric shapes such as triangles or spheres), so ray-scene intersection 
+						essentially boils down to ray-primitive intersection. In this homework, we are working with 
+						triangle and sphere primitives. 
+					</p>
+					<p>
+						The images below show renderings of several models after implementing ray generation and scene 
+						intersection. Since complex 3D models are typically constructed from simple primitives like 
+						triangles or spheres, adding support for ray-triangle and ray-sphere intersection allowed the 
+						system to render complex geometry using simple building blocks.
+					</p>
 					<div class="pics-carousel grid-cols-3 max-w-6xl">
 						<figure>
 							<img src="./imgs/Task1-1.png">
@@ -44,11 +72,46 @@
 							<figcaption>Render of coil model</figcaption>
 						</figure>
 					</div>
+					<p>To implement ray-triangle intersection, I used the Möller-Trumbore algorithm.</p>
+					<div class="w-full overflow-auto">
+						<img src="./imgs/Möller-Trumbore.png" class="w-[46vw] float-left mr-5 object-contain">
+						<p>
+							The core principle behind the Möller-Trumbore algorithm is to express the point of intersection on the triangle in terms of it's barycentric coordinates. Then, it solves for the intersection by setting the ray's parametric equation equal to the barycentric representation of a point on the triangle. The specifics of the math behind the Möller-Trumbore algorithm is shown in the image to the left. 
+						</p>
+						<p>
+							Put simply, the Möller-Trumbore algorithm allows us to get the barycentric representation of the potential 
+							intersection point using relatively cheap vector operations. 
+						</p>
+						<p>Notice that there are three cases we are dealing with: </p>
+						<ol>
+							<li><b>The ray is parallel to the triangle's plane: </b>In this case, the algorithm will fail (due to a zero determinant), so we check for this early.</li>
+							<li><b>The intersection lies outside the triangle: </b>This is detected by examining the computed barycentric coordinates. If any of them are negative, or if their sum exceeds 1, the point lies outside the triangle.</li>
+							<li><b>The intersection lies within the triangle: </b>If all barycentric coordinates are between 0 and 1 and their sum is less than or equal to 1, then the ray intersects the triangle.</li>
+						</ol>
+					</div>
 				</section>
 
-				<section id="2">
+				<section id="3">
 					<h1>Part 2 — Bounding Volume Hierarchy</h1>
-					
+					<p>
+						After implementing ray generation and triangle intersection, we can begin rendering objects. However, it quickly 
+						becomes apparent that this is not sufficient for efficient rendering—especially as scene complexity increases. 
+						Currently, even relatively simple scenes can take a long time to render. The bunny model shown in the previous 
+						section, for example, took 76.36 seconds to render. To address this performance bottleneck, we can introduce 
+						Bounding Volume Hierarchies (BVH), a spatial acceleration structure that significantly speeds up ray-scene intersection 
+						by reducing the number of triangle-ray tests required.
+					</p>
+					<p>
+						To implement Bounding Volume Hierarchy (BVH), I first compute the mean centroid of all primitives in the scene. This 
+						allows us to consider axis-aligned splitting planes—specifically the XY, XZ, or YZ planes. To choose the best axis and 
+						position to split, I use the Surface Area Heuristic (SAH), which estimates how good a split is based on how likely a 
+						ray is to intersect primitives in the resulting bounding boxes. The intuition of the SAH is that larger surface areas 
+						and more primitives in a bounding box increase the likelihood of ray-primitive intersection. I evaluate this heuristic 
+						across the candidate planes and select the split that gives us the best heuristic. Then, I recursively apply the same 
+						process to the resulting child nodes. In rare cases where the primitives are tightly clustered and a split would assign 
+						all of them to one side, I divide up the list of primitives into two equal halves. This ensures progress in tree 
+						construction and avoids infinite recursion.
+					</p>
 					<div class="pics-carousel grid-cols-3 max-w-6xl">
 						<figure>
 							<img src="./imgs/Task2-1.png">
@@ -63,6 +126,282 @@
 							<figcaption>Render of lucy model</figcaption>
 						</figure>
 					</div>
+					<p>
+						Let's evaluate how much faster our renderer becomes with Bounding Volume Hierarchy (BVH). The following models were 
+						rendered using 8 threads:
+					</p>
+					<table>
+						<tr>
+							<td>Rendered Model</td>
+							<td>Rendering Time without BVH</td>
+							<td>Rendering Time with BVH</td>
+						</tr>
+						<tr>
+							<td>Beast Model</td>
+							<td>28.91 seconds</td>
+							<td>0.05 seconds</td>
+						</tr>
+						<tr>
+							<td>Blob Model</td>
+							<td>234.46 seconds</td>
+							<td>0.10 seconds</td>
+						</tr>
+						<tr>
+							<td>Beast Model</td>
+							<td>131.19 seconds</td>
+							<td>0.06 seconds</td>
+						</tr>
+					</table>
+					<p>
+						As you can see, using Bounding Volume Hierarchy (BVH) significantly boosted the performance of our renderer. Across 
+						all models, BVH reduced rendering times by anywhere from seconds to minutes. This shows how effective BVH is for 
+						reducing the number of ray-primitive tests. 
+					</p>
+				</section>
+
+				<section id="4">
+					<h1>Part 3 — Direct Illumination</h1>
+					<p>
+						So far, we've implemented features that let us find where objects are in the scene, but we haven't yet considered how 
+						much light those objects receive. To handle this, we estimate incoming light at a surface point using sampling. If a 
+						ray directly hits a light source, we know that all points along that ray receive direct illumination. But when a ray 
+						hits a non-emissive object, we estimate how much light that point receives by casting additional rays in various directions to search for light sources. This is where different sampling strategies come into play: they determine which directions we sample and how we weight each sample's contribution.
+					</p>
+					<div class="pics-carousel grid-cols-2 max-w-4xl">
+						<figure>
+							<img src="./imgs/Task3-1.png">
+							<figcaption>Bunny model with Uniform Hemisphere Sampling</figcaption>
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-2.png">
+							<figcaption>Bunny model with Importance Sampling</figcaption>
+						</figure>
+					</div>
+					<p>
+						In this assignment, we explore two sampling functions for estimating direct lighting: hemisphere sampling and importance sampling. Shown above is the model of a bunny rendered using both approaches.
+					</p>
+					<p>
+						In hemisphere sampling, we consider the hemisphere centered on the surface normal and choose random directions to cast rays. This sampling is typically cosine-weighted to favor directions closer to the surface normal, reflecting how light naturally scatters. However, this approach can be inefficient because many sampled rays may miss actual light sources, resulting in noisier images. To implement this, 
+					</p>
+					<p>
+						Importance sampling addresses this inefficiency by biasing samples toward the directions of light sources directly. By 
+						focusing rays where the light actually comes from, importance sampling produces cleaner and more accurate lighting estimates with fewer samples.
+					</p>
+					<p>
+						In both implementations, we trace rays backward from the camera into the scene. When a ray intersects an object, the amount of light (radiance) leaving that point toward the camera depends on the object's surface characteristics, represented by the Bidirectional Reflectance Distribution Function (BRDF), as well as the incoming light (irradiance) at that point. To estimate this irradiance, we cast rays from the intersection point and trace them until they reach a light source—a process known as Monte Carlo integration. During this process, we determine the directions and weights of these rays using either hemisphere sampling or importance sampling, while also checking whether the rays are blocked by other objects.
+					</p>
+					<div class="pics-carousel grid-cols-4 max-w-4xl">
+						<p class="h-fit"># of light rays = 1</p>
+						<p class="h-fit"># of light rays = 4</p>
+						<p class="h-fit"># of light rays = 16</p>
+						<p class="h-fit"># of light rays = 64</p>
+						<figure>
+							<img src="./imgs/Task3-7.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-8.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-9.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-10.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-3.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-4.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-5.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task3-6.png">
+						</figure>
+					</div>
+					<p>
+						Uniform hemisphere sampling casts rays randomly over all directions above a surface point, so purely by chance, certain points will shoot out rays that miss the light, resulting in an image that looks more noisy. In contract, importance sampling directly sends rays in the direction of the light, making it product images that look more sharp even with less samples. This can be seen fairly clearly in the first picture shown. With the same number of samples per pixel and the same number of light rays, we can clearly see that the image on the right appears more sharp than the one on the left.
+					</p>
+				</section>
+
+				<section id="5">
+					<h1>Part 4 — Global Illumination</h1>
+					<p>
+						So far, our renderer handles only direct lighting, which means light bouncing once from a light source to a surface. However, in the real world, light bounces multiple times, affecting the colors and brightness of nearby objects. For instance, a white shirt next to a blue wall often appears to have a subtle blue tint because of light reflected off the wall, even though the shirt itself hasn't changed color.
+					</p>
+					<p>
+						To simulate this, we implement indirect lighting by recursively casting rays that bounce around the scene. My indirect lighting function works by shooting a ray from the camera into the scene; when this ray hits an object, it casts additional rays from that point in various directions to gather light contributed by secondary, tertiary, and further bounces. This recursive process accumulates the influence of multiple light interactions, allowing the renderer to capture more realistic global illumination effects.
+					</p>
+					<p>Some model rendered with only direct illumination, only direct illumination, and global illumination:</p>
+					<div class="pics-carousel grid-cols-3 max-w-6xl">
+						<figure>
+							<img src="./imgs/Task4-1.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-2.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-3.png">
+						</figure>
+						<p class="h-fit !mt-0">Only Direct Illumination</p>
+						<p class="h-fit !mt-0">Only Indirect Illumination</p>
+						<p class="h-fit !mt-0">Global Illumination</p>
+						<figure>
+							<img src="./imgs/Task4-4.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-5.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-6.png">
+						</figure>
+					</div>
+					<p>
+						The images above illustrate the impact of indirect illumination on a scene. For example, with only direct lighting, the spheres appear harshly lit. The underside of the spheres are completely black, and it feels like none of the objects in the scene are interacting with each other. When we look at the scene with indirect lighting alone, the lighting becomes much softer. The bounced light brightens the undersides of the spheres and adds subtle color hues, such as blue and red, to their sides. The final combined image demonstrates how indirect lighting contributes to a more natural and realistic appearance in the scene.
+					</p>
+					<p>Bunny model rendered with and without accumulating bounced rays:</p>
+					<div class="pics-carousel grid-cols-6">
+						<p class="h-fit">no bounces</p>
+						<p class="h-fit">1 bounce</p>
+						<p class="h-fit">2 bounces</p>
+						<p class="h-fit">3 bounces</p>
+						<p class="h-fit">4 bounces</p>
+						<p class="h-fit">5 bounces</p>
+						<figure>
+							<img src="./imgs/Task4-7.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-8.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-9.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-10.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-11.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-12.png">
+						</figure>
+
+						<!-- Accumulate Bounced Rays -->
+						<figure>
+							<img src="./imgs/Task4-13.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-14.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-15.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-16.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-17.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-18.png">
+						</figure>
+					</div>
+					<p>
+						The first row above shows the render of the bunny without accumulating bounced rays, while the second row includes bounced light. Comparing the two, it's clear that indirect lighting makes subtle but important contributions to the overall image. The second bounce adds illumination from nearby surfaces, softening shadows and introducing color bleeding—for example, the corners of the room and the underside of the bunny are noticeably more lit. The third bounce appears to enhance lighting in the corners even further. This might be because light gets "trapped" in these areas, bouncing repeatedly and contributing to a smoother, more diffuse lighting effect. Compared to rasterization, these additional bounces—made possible by ray tracing—greatly improve realism. In more complex scenes, this improvement would be even more apparent, as light interactions become increasingly intricate and difficult to approximate with traditional rasterization techniques.
+					</p>
+					<p class="!mt-5">Bunny model rendered with varying max ray depths:</p>
+					<div class="pics-carousel grid-cols-6">
+						<figure>
+							<img src="./imgs/Task4-19.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-20.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-21.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-22.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-23.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-24.png">
+						</figure>
+						<p class="h-fit !mt-0">Max ray depth = 0</p>
+						<p class="h-fit !mt-0">Max ray depth = 1</p>
+						<p class="h-fit !mt-0">Max ray depth = 2</p>
+						<p class="h-fit !mt-0">Max ray depth = 3</p>
+						<p class="h-fit !mt-0">Max ray depth = 4</p>
+						<p class="h-fit !mt-0">Max ray depth = 100</p>
+					</div>
+					<p class="!mt-4">Bunny model rendered with varying samples per pixel:</p>
+					<div class="pics-carousel grid-cols-6">
+						<figure>
+							<img src="./imgs/Task4-25.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-26.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-27.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-28.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-29.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task4-30.png">
+						</figure>
+						<p class="h-fit !mt-0">Samples per pixel = 1</p>
+						<p class="h-fit !mt-0">Samples per pixel = 2</p>
+						<p class="h-fit !mt-0">Samples per pixel = 4</p>
+						<p class="h-fit !mt-0">Samples per pixel = 16</p>
+						<p class="h-fit !mt-0">Samples per pixel = 64</p>
+						<p class="h-fit !mt-0">Samples per pixel = 1024</p>
+					</div>
+				</section>
+
+				<section id="6">
+					<h1>Part 5 — Adaptive Sampling</h1>
+					<p>
+						Currently, we are sending many many rays for each pixel on screen to pick up on all the details of the scene. However, this is, many times, unnecessary especially for parts of the scene that are relatively simple. Adaptive sampling addresses this by dynamically adjusting the number of samples per pixel based on how quickly the color converges. The key idea is to monitor the variance in sampled colors: if the color stabilizes beyond a certain point, we stop early to save computation.
+					</p>
+					<p>
+						In my implementation, I track the running sum of estimated colors and the sum of their squared magnitudes. Every few samples, I calculate the confidence interval using the mean and variance of the samples. If this interval falls below a certain threshold, then the pixel is considered to have convered, and I break out of the sampling loop. To prevent an infinite loop, I set a maximum iteration limit to the loop. This way, I can preserve the details of high-frequency regions without wasting time and resources on the smooth regions (an idea pretty similar to mipmapping).
+					</p>
+					<div class="pics-carousel grid-cols-3 max-w-6xl">
+						<figure>
+							<img src="./imgs/Task5-1.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task5-2.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task5-3.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task5-4.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task5-5.png">
+						</figure>
+						<figure>
+							<img src="./imgs/Task5-6.png">
+						</figure>
+						<p>Without Adaptive Sampling</p>
+						<p>With Adaptive Sampling</p>
+						<p>Sampling Rate Image</p>
+					</div>
+					<p>The renderings above were rendered at a max ray depth of 5, 1 sample per light, and 2048 samples per pixel.</p>
+					<p>
+						As shown above, there's barely any visible difference between the render with and without adaptive sampling. However, the performance gain is dramatic. For instance, the sphere model rendered 315,432,490 rays in 92.02 seconds without adaptive sampling. With adaptive sampling enabled—and using the same image and quality settings—it only required 184,513,336 rays and completed in 36.89 seconds. That's nearly a 50% reduction in rays and a 60% improvement in rendering time, all while maintaining perceptual image quality. This demonstrates how adaptive sampling can significantly optimize rendering by concentrating rays only where they matter most.
+					</p>
+					<br>
 				</section>
 			</main>
 		</div>
