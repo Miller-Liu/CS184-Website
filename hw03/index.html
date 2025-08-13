@@ -401,8 +401,10 @@
 					<p>
 						As shown above, there's barely any visible difference between the render with and without adaptive sampling. However, the performance gain is dramatic. For instance, the sphere model rendered 315,432,490 rays in 92.02 seconds without adaptive sampling. With adaptive sampling enabled—and using the same image and quality settings—it only required 184,513,336 rays and completed in 36.89 seconds. That's nearly a 50% reduction in rays and a 60% improvement in rendering time, all while maintaining perceptual image quality. This demonstrates how adaptive sampling can significantly optimize rendering by concentrating rays only where they matter most.
 					</p>
-					<br>
 				</section>
+				<p>
+					Acknowledgement of AI: I used AI for debugging a couple errors that came up (specifically an error with incorrect intersections with triangle meshes, and errors with the bvh on the wall-e model).
+				</p>
 			</main>
 		</div>
    		<script type="module" src="/utils/write-up.js" defer></script>

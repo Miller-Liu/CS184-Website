@@ -5,6 +5,14 @@
     font-family: "Quicksand";
 }
 
+.noprint {
+    @apply !hidden;
+}
+
+.onlyprint {
+    display: block;
+}
+
 html, body {
     overscroll-behavior: none;
 }
@@ -41,7 +49,7 @@ main {
     @apply overflow-auto px-7;
 
     * {
-        @apply my-1;
+        @apply my-1 text-sm;
     }
 
     h1 {
@@ -75,10 +83,10 @@ main {
     section {
         @apply pt-2 pb-1;
     }
-
+/* 
     section:not(:first-of-type) {
         @apply break-before-page clear-both;
-    }
+    } */
 
     div.pics-carousel {
         @apply grid gap-x-4 mt-2 mx-auto justify-items-center;

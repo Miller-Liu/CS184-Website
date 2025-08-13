@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Graphics Showcase</title>
+		<!-- <link href="../utils/write-up.css" media="screen" rel="stylesheet"/> -->
+		<link href="/utils/print.css"  rel="stylesheet"/>
+	</head>
+	<body>
+		<header>
+			<h1>Dawn to Dust: Volumetric Scattering</h1>
+			<p>Contributers:  Miller Liu, Stephane Finot, Kevin Hu, John Bragado</p>
+			<p class="onlyprint !text-sm">Website Link: 
+				<a href="https://miller-liu.github.io/CS184-Website/final_project/proposal" target="_blank" rel="noopener noreferrer">miller-liu.github.io/CS184-Website/final_project/final/</a>
+				<br>
+				Video Link: <a href="https://drive.google.com/file/d/1IZmA_UWIifK5je1VaBM1Uc3l5ZHVYDyQ/view?usp=sharing" target="_blank" rel="noopener noreferrer">drive.google.com/file/d/1IZmA_UWIifK5je1VaBM1Uc3l5ZHVYDyQ/view?usp=sharing</a>
+				<br>
+				Google Slides Link: <a href="https://docs.google.com/presentation/d/1Gc7dQh9ItqQSiQj0tJ3uFzxl6c3kYwJeEZN2WcWqK0k/edit" target="_blank" rel="noopener noreferrer">docs.google.com/presentation/d/1Gc7dQh9ItqQSiQj0tJ3uFzxl6c3kYwJeEZN2WcWqK0k/edit</a>
+				<br>
+				Final Gif: <a href="https://drive.google.com/file/d/1BM_oJi4a9SQuyZOsB6c3htJ-zBDjaaJ4/view?usp=sharing" target="_blank" rel="noopener noreferrer">drive.google.com/file/d/1BM_oJi4a9SQuyZOsB6c3htJ-zBDjaaJ4/view?usp=sharing</a>
+			</p>
+			<hr>
+		</header>
+		<div>
+			<!-- Sidebar -->
+			<aside class="h-fit h-max-[80vh] w-64 bg-white shadow-lg rounded-lg m-6 p-6 hidden lg:block flex-shrink-0" aria-label="Sidebar">
+				<nav id="table-of-content" class="space-y-4">
+					<!-- JS will inject ToC here -->
+				</nav>
+			</aside>
+
+			<!-- Main Content -->
+			<main>
+				<section id="1">
+					<h1>Abstract</h1>
+					<p>
+						Our project is about implementing ray scattering to enable more realistic volumetric lighting in scenes. In homework 3, we implemented a pathtracer that allowed us to emulate realistic lighting by generating rays that shoot from the camera to surfaces throughout the scene, allowing them to bounce repeatedly and accumulate luminance. We built off of that assignment by, rather than shooting rays that travel until hitting an object, enabling randomized opportunities for the rays to interact with the medium they are traveling through and bounce in a different direction. With a full implementation, we can display a light fog covering our scene that creates light shafts when exposed to light sources.
+					</p>
+				</section>
+				<section id="2">
+					<h1>Technical Approach</h1>
+					<p>
+						To implement ray scattering, we sample from a Poisson distribution for each ray to get a random length s. This is used to simulate the probability of a light ray interacting with a medium. 
+						The radiance for the ray can then be calculated from four components: Absorption, Emission, Out-scattering, and In-scattering.
+					</p>
+					<p>
+						Our implementation is a combination and a subset of the work by Lafortune and Willems. The difference being that due to time limitations, we currently don’t have the bidirectional and non-homogeneous medium support. Furthermore, we chose not to include emission as it is more used for simulation mediums that glow by itself such as fire which is different from the fog effect we want to create. For absorption we will need to model as ray travels through the air, it will partially absorb some of the energy so the light will lose energy along its original path. As for the out scattering, it is how part of ray energy scattering away from the original path also causes ray to lose energy along its original path. Lastly, for scattering, it describes how the lights will gain energy as the energy of other rays scatter toward the ray we are focusing on, causing the ray to gain energy at the direction we are looking at.
+					</p>
+					<div class="pics-carousel grid-cols-1 max-w-xl">
+						<img src="./imgs/lights.png">
+					</div>
+					<p>
+						From homework 3, we built a monte carlo pathtracer renderer that only renders the surfaces of objects. To add volumetric rendering functionality on top of this, we will need to translate the physical aspects / properties of mediums such as fog to a monte carlo version. Speaking broadly, we accomplish this by modeling luminance falloff using transmission, sampling scattering distances with inverse CDF sampling, and modeling bounces using phase functions. To improve the convergence rate of our renders, we also implemented phase function sampling vs importance sampling for volumetric path tracing (which is somewhat similar to importance sampling for surfaces).
+					</p>
+					<p>
+						In real life, light loses energy as it passes through gasses as light interacts with particles in the air. Imagine a single ray of light passing through a medium, eventually it will hit a particle and be absorbed or reflected in some direction. However, not all photons in that ray of light will reach this far, some will inevitably be absorbed or deflected away throughout this distance. In our code, we model this interaction distance using inverse CDF sampling. Then, once we determine this interaction distance, we calculate the transmittance between the origin of the ray and this distance to calculate how much light has made it to this scattering distance. In addition, at this distance, light could be either scattered or absorbed. Thus, we weight the light we receive by bouncing by the albedo, which measures the probability of a ray being scattered given that an interaction has occurred. 
+					</p>
+					<div class="pics-carousel grid-cols-2 max-w-xl">
+						<img src="./imgs/scatter1.png">
+						<img src="./imgs/scatter2.png">
+					</div>
+					<p>
+						If this light gets scattered, we will use inverse CDF sampling on the phase function to determine which way the light is reflected. This phase function is essentially a mathematical model for how particles tend to scatter light in the real world. Some materials tend to let light through more, which means that the light is more likely to continue going forwards, while some act the opposite way. We implemented the Henyey-Greenstein and Isotropic phase functions. However, much like our hemisphere sample method in homework 3, this method might be physically correct but does not converge nearly as fast as we would like. Thus, we created an importance sampling method, where we intentionally sample towards light sources, and unbias those samples by weighing these samples with the probability of the phase function sampling in this direction.
+					</p>
+					<p class="mt-2">
+						<b>Challenges / Problems Encountered: </b>
+						One of the first issues we ran into was determining whether our absorption and outscattering were working properly due to the lack of in-scattering color. We used a temporary color to help visualize progress. Another issue was importing scenes from Blender. There were many inconsistencies, so we tried to keep scenes as simple as possible. During the early stages, we speculated that the newly introduced extinction made indirect lighting require much more computation. Furthermore, volumetric scattering caused the adaptive sampling to converge much quicker, causing more solid black regions. We chose to disable adaptive sampling.
+					</p>
+					<p class="mt-2">
+						<b>Lessons Learned: </b>
+						Since we are trying to model a physically accurate situation, our intuition of the physical world is important. We learned that probability is a very important part of the estimation, and figuring out the PDF and keeping all the estimations unbiased is easy to mess up and hard to debug.
+					</p>
+				</section>
+				<section id="4">
+					<h1>Results</h1>
+					<div class="pics-carousel grid-cols-1 max-w-3xs">
+						<img src="./imgs/bunnyp.png">
+					</div>
+					<div class="pics-carousel grid-cols-2 max-w-md">
+						<figure>
+							<img src="./imgs/cube1.png">
+							<figcaption>Regular path tracing</figcaption>
+						</figure>
+						<figure>
+							<img src="./imgs/cube2.png" class="brightness-150">
+							<figcaption>Volumetric path tracing</figcaption>
+						</figure>
+						<figure class="noprint">
+							<img src="./imgs/windowNoFogL.gif">
+							<figcaption>Regular path tracing</figcaption>
+						</figure>
+						<figure class="noprint">
+							<img src="./imgs/windowFogL.gif">
+							<figcaption>Volumetric path tracing</figcaption>
+						</figure>
+					</div>
+					<div class="pics-carousel grid-cols-3 max-w-6xl noprint">
+						<figure>
+							<img src="./imgs/absorbLoop.gif">
+							<figcaption>Scattering: 0.0, Absorption: 0.0 -> 0.6</figcaption>
+						</figure>
+						<figure>
+							<img src="./imgs/scatterLoop.gif">
+							<figcaption>Absorption: 0.0, Scattering: 0.0 -> 0.6</figcaption>
+						</figure>
+						<figure>
+							<img src="./imgs/ratioLoop.gif">
+							<figcaption>Maintaining Extinction: 0.3, Changing both scattering and absorption</figcaption>
+						</figure>
+					</div>
+				</section>
+				<section id="5">
+					<h1>References</h1>
+					<p>
+						Bo Sun, Ravi Ramamoorthi, Srinivasa Narasimhan, Shree K. Nayar (2005). A Practical Analytic Single Scattering Model for Real Time Rendering. ACM Transactions on Graphics (SIGGRAPH 2005), 24(3). Retrieved from https://cseweb.ucsd.edu/~ravir/papers/singlescat/scattering.pdf
+					</p>
+					<p>
+						Jarosz, W. (2008). Efficient Monte Carlo methods for light transport in scattering media (Doctoral dissertation, UC San Diego). Chapter 4. Retrieved from https://cs.dartmouth.edu/~wjarosz/publications/dissertation/chapter4.pdf
+					</p>
+					<p>
+						Lafortune, E.P., Willems, Y.D. (1996). Rendering Participating Media with Bidirectional Path Tracing. In: Pueyo, X., Schröder, P. (eds) Rendering Techniques '96. EGSR 1996. Eurographics. Springer, Vienna. http://luthuli.cs.uiuc.edu/~daf/courses/rendering/papers/lafortune96rendering.pdf
+					</p>
+				</section>
+				<section id="6">
+					<h1>Contributions</h1>
+					
+					<ul class="list-disc pl-2">
+						<li>
+							<b>Kevin Hu: </b>
+							Worked on the logic for the Monte Carlo Estimator code, debugging, and tuning the parameter, and rendering the scene.
+						</li>
+						<li>
+							<b>Miller Liu: </b>
+							Worked on the volumetric scattering logic and reformatted the code to work more efficiently. Setup up the website for the project.
+						</li>
+						<li>
+							<b>Stephane Finot: </b>
+							Created the Blender scenes and rendered animated sequences. Worked on the presentation slides, wrote scripts for videos, and wrote website content.
+						</li>
+						<li>
+							<b>John Bragado: </b>
+							Created alternate base code structures, debugging, and worked on the write-ups and slides.
+						</li>
+					</ul>
+				</section>
+			</main>
+		</div>
+   		<script type="module" src="/utils/write-up.js" defer></script>
+	</body>
+</html>
