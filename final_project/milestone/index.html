@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Graphics Showcase</title>
+		<!-- <link href="../utils/write-up.css" media="screen" rel="stylesheet"/> -->
+		<script type="module" crossorigin src="/CS184-Website/assets/modulepreload-polyfill-B5Qt9EMX.js"></script>
+		<script type="module" crossorigin src="/CS184-Website/assets/write-up-CQYhngzC.js"></script>
+		<link rel="stylesheet" crossorigin href="/CS184-Website/assets/print-DazuiJl3.css">
+	</head>
+	<body class="">
+		<header>
+			<h1>Dawn to Dust: Volumetric Scattering</h1>
+			<p class="onlyprint !text-sm">Website Link: 
+				<a href="https://miller-liu.github.io/CS184-Website/final_project/proposal" target="_blank" rel="noopener noreferrer">miller-liu.github.io/CS184-Website/final_project/milestone/</a>
+				<br>
+				Video Link: <a href="https://drive.google.com/file/d/1pLh26UvMoDr3gT0mApvTZiX0hPIF-r-j/view?usp=sharing" target="_blank" rel="noopener noreferrer">drive.google.com/file/d/1pLh26UvMoDr3gT0mApvTZiX0hPIF-r-j/view?usp=sharing</a>
+				<br>
+				Google Slides Link: <a href="https://docs.google.com/presentation/d/1ksR6TW3YcUS3YZNQiAtgn6JdHGSHuSrtGkFNUavmY-c/edit" target="_blank" rel="noopener noreferrer">docs.google.com/presentation/d/1ksR6TW3YcUS3YZNQiAtgn6JdHGSHuSrtGkFNUavmY-c/edit</a>
+			</p>
+			<p>Contributers:  Miller Liu, Stephane Finot, Kevin Hu, John Bragado</p>
+			<hr>
+		</header>
+		<div>
+			<!-- Sidebar -->
+			<aside class="h-fit h-max-[80vh] w-64 bg-white shadow-lg rounded-lg m-6 p-6 hidden lg:block flex-shrink-0" aria-label="Sidebar">
+				<nav id="table-of-content" class="space-y-4">
+					<!-- JS will inject ToC here -->
+				</nav>
+			</aside>
+
+			<!-- Main Content -->
+			<main>
+				<section id="1">
+					<h1>Current Progress</h1>
+					<p>
+						So far, we have tried to implement the basic structure for the ray marching loop to enable the absorption and out-scattering aspects of volumetric lighting. With this enabled, we can render a scene where the environment fades out into darkness, as we are currently subtracting from the luminance. However, it is currently a bit difficult to tell how well our current implementation is working because it is difficult to tell when a black pixel is from absorption or from noise. 
+					</p>
+					<p>
+						We did not follow the original plan, as it took much longer than expected to try to figure out the structure of the ray marching and implementation details, such as termination of the volumetric scattering rays for performance purposes. To update our work plans, taking into account the feedback from our proposal, we will aim to have the ray marching fully completed by August 10th. With most of the concepts fully flushed out and implementation decisions being finalized, we primarily need to focus on coding as much as possible to leave us a couple of days to render and experiment with different scenes. 
+					</p>
+					<p>
+						In the next step, we plan to implement in-scattering, as this is where we will add luminance to a sample as rays travel through the material. Then we will generate results for our deliverable, such as tuning the parameters, adding particle effects, and textured area light.
+					</p>
+					<p>
+						We also began figuring out how we will set up scenes that will better demonstrate the effects of Volumetric Scattering for the final render. So far, we created spotlights, changed the color of the light, and set up a basic pipeline to render multiple scenes so we can create small animations. For the final render, we would like to add some small, visible dust particles and maybe more complex motion using the lights
+					</p>
+					<div class="pics-carousel grid-cols-3 max-w-6xl">
+						<figure>
+							<img src="/CS184-Website/assets/bunnyP-CGYap7EY.png">
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/sparkle-C8Qj96cJ.png">
+						</figure>
+						<figure>
+							<img src="/CS184-Website/assets/windowLoop-KELIJeVa.gif" class="noprint">
+							<img src="/CS184-Website/assets/windowLoop-DwCzNJkJ.png" class="onlyprint">
+						</figure>
+					</div>
+				</section>
+			</main>
+		</div>
+	</body>
+</html>
